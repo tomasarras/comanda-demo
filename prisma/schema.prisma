@@ -1,0 +1,150 @@
+// Comanda — fictional restaurant management demo (portfolio project).
+// Full data model sketched up front so later phases (Órdenes, Ventas,
+// Gastos, Caja) don't need destructive migrations; only Productos/Panel
+// are wired up to UI in Phase 1.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum OrderType {
+  SALON
+  MOSTRADOR
+  DELIVERY
+}
+
+enum OrderStatus {
+  ABIERTA
+  EN_COCINA
+  LISTA
+  ENTREGADA
+  PAGADA
+  CANCELADA
+}
+
+enum PaymentMethod {
+  EFECTIVO
+  TARJETA
+  TRANSFERENCIA
+  MERCADO_PAGO
+}
+
+enum CashMovementType {
+  INGRESO
+  EGRESO
+  VENTA
+}
+
+model Category {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  products  Product[]
+  createdAt DateTime  @default(now())
+}
+
+model Product {
+  id          String      @id @default(cuid())
+  name        String
+  description String?
+  price       Decimal     @db.Decimal(10, 2)
+  cost        Decimal     @db.Decimal(10, 2)
+  stock       Int         @default(0)
+  available   Boolean     @default(true)
+  categoryId  String?
+  category    Category?   @relation(fields: [categoryId], references: [id])
+  orderItems  OrderItem[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Supplier {
+  id        String    @id @default(cuid())
+  name      String
+  contact   String?
+  phone     String?
+  email     String?
+  notes     String?
+  expenses  Expense[]
+  createdAt DateTime  @default(now())
+}
+
+model RestaurantTable {
+  id       String  @id @default(cuid())
+  number   Int     @unique
+  capacity Int     @default(2)
+  orders   Order[]
+}
+
+model Order {
+  id         String      @id @default(cuid())
+  type       OrderType   @default(SALON)
+  status     OrderStatus @default(ABIERTA)
+  tableId    String?
+  table      RestaurantTable? @relation(fields: [tableId], references: [id])
+  waiterName String?
+  items      OrderItem[]
+  sale       Sale?
+  total      Decimal     @default(0) @db.Decimal(10, 2)
+  createdAt  DateTime    @default(now())
+  closedAt   DateTime?
+}
+
+model OrderItem {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Int
+  unitPrice Decimal  @db.Decimal(10, 2)
+  notes     String?
+}
+
+model Sale {
+  id            String        @id @default(cuid())
+  orderId       String?       @unique
+  order         Order?        @relation(fields: [orderId], references: [id])
+  total         Decimal       @db.Decimal(10, 2)
+  paymentMethod PaymentMethod
+  cashierName   String?
+  createdAt     DateTime      @default(now())
+}
+
+model Expense {
+  id          String    @id @default(cuid())
+  description String
+  category    String
+  amount      Decimal   @db.Decimal(10, 2)
+  supplierId  String?
+  supplier    Supplier? @relation(fields: [supplierId], references: [id])
+  createdAt   DateTime  @default(now())
+}
+
+model CashRegisterShift {
+  id             String         @id @default(cuid())
+  openedBy       String
+  closedBy       String?
+  openingAmount  Decimal        @db.Decimal(10, 2)
+  closingAmount  Decimal?       @db.Decimal(10, 2)
+  expectedAmount Decimal?       @db.Decimal(10, 2)
+  difference     Decimal?       @db.Decimal(10, 2)
+  movements      CashMovement[]
+  openedAt       DateTime       @default(now())
+  closedAt       DateTime?
+}
+
+model CashMovement {
+  id          String            @id @default(cuid())
+  shiftId     String
+  shift       CashRegisterShift @relation(fields: [shiftId], references: [id], onDelete: Cascade)
+  type        CashMovementType
+  amount      Decimal           @db.Decimal(10, 2)
+  description String?
+  createdAt   DateTime          @default(now())
+}
