@@ -1,21 +1,31 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import Topbar from "@/components/Topbar";
 import { useRole } from "@/components/RoleProvider";
+import { getAllowedSections, isSectionAllowed } from "@/lib/roles";
 
 export default function DashboardLayout({ children }) {
   const router = useRouter();
-  const { roleId, loaded } = useRole();
+  const pathname = usePathname();
+  const { roleId, role, loaded } = useRole();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (loaded && !roleId) router.replace("/");
   }, [loaded, roleId, router]);
 
-  if (!loaded || !roleId) {
+  useEffect(() => {
+    if (!loaded || !role) return;
+    const sectionId = pathname.split("/")[1];
+    if (!isSectionAllowed(role, sectionId)) {
+      router.replace(getAllowedSections(role)[0]?.href || "/");
+    }
+  }, [loaded, role, pathname, router]);
+
+  if (!loaded || !roleId || !isSectionAllowed(role, pathname.split("/")[1])) {
     return <div className="flex min-h-screen items-center justify-center text-sm text-slate-400">Cargando…</div>;
   }
 

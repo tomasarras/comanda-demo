@@ -14,7 +14,8 @@ import {
   Wallet,
   X,
 } from "lucide-react";
-import { NAV_SECTIONS } from "@/lib/roles";
+import { getAllowedSections } from "@/lib/roles";
+import { useRole } from "@/components/RoleProvider";
 
 const ICONS = {
   panel: LayoutDashboard,
@@ -29,6 +30,8 @@ const ICONS = {
 
 export default function Sidebar({ open, onClose }) {
   const pathname = usePathname();
+  const { role } = useRole();
+  const sections = getAllowedSections(role);
 
   return (
     <>
@@ -60,7 +63,7 @@ export default function Sidebar({ open, onClose }) {
         </div>
 
         <nav className="flex-1 space-y-1 px-3 py-2">
-          {NAV_SECTIONS.map((section) => {
+          {sections.map((section) => {
             const Icon = ICONS[section.id];
             const active = pathname.startsWith(section.href);
             return (
