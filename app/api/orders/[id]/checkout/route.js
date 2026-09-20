@@ -1,0 +1,31 @@
+import { NextResponse } from "next/server";
+import { checkoutOrder, SaleError } from "@/lib/sales";
+import { serializeOrder } from "@/lib/orders";
+
+const PAYMENT_METHODS = ["EFECTIVO", "TARJETA", "TRANSFERENCIA", "MERCADO_PAGO"];
+
+function serializeSale(sale) {
+  return { ...sale, total: Number(sale.total) };
+}
+
+export async function POST(request, { params }) {
+  const { id } = await params;
+  const body = await request.json();
+
+  if (!PAYMENT_METHODS.includes(body.paymentMethod)) {
+    return NextResponse.json({ error: "Medio de pago inválido" }, { status: 400 });
+  }
+
+  try {
+    const { order, sale } = await checkoutOrder(id, {
+      paymentMethod: body.paymentMethod,
+      cashierName: (body.cashierName || "").trim() || "Equipo",
+    });
+    return NextResponse.json({ order: serializeOrder(order), sale: serializeSale(sale) });
+  } catch (err) {
+    if (err instanceof SaleError) {
+      return NextResponse.json({ error: err.message }, { status: err.status });
+    }
+    throw err;
+  }
+}

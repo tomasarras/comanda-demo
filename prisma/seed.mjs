@@ -73,6 +73,27 @@ async function main() {
     });
   }
 
+  console.log("Seeding restaurant tables...");
+  const TABLES = [
+    { number: 1, capacity: 2 },
+    { number: 2, capacity: 2 },
+    { number: 3, capacity: 4 },
+    { number: 4, capacity: 4 },
+    { number: 5, capacity: 4 },
+    { number: 6, capacity: 6 },
+    { number: 7, capacity: 6 },
+    { number: 8, capacity: 2 },
+    { number: 9, capacity: 4 },
+    { number: 10, capacity: 8 },
+  ];
+  for (const t of TABLES) {
+    await prisma.restaurantTable.upsert({
+      where: { number: t.number },
+      update: {},
+      create: t,
+    });
+  }
+
   console.log("Seeding suppliers...");
   const suppliers = [];
   for (const s of SUPPLIERS) {
