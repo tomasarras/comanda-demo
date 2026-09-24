@@ -2,9 +2,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { BadgeDollarSign, Receipt, TrendingUp } from "lucide-react";
+import DatePicker from "@/components/DatePicker";
 import { Skeleton } from "@/components/Skeleton";
 import WeekChart from "@/components/WeekChart";
-import { formatCurrency } from "@/lib/format";
+import { formatCurrency, toDateInputValue } from "@/lib/format";
 
 const PAYMENT_METHODS = [
   { id: "EFECTIVO", label: "Efectivo" },
@@ -34,8 +35,8 @@ export default function VentasPage() {
   const [summary, setSummary] = useState(null);
   const [sales, setSales] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("");
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
+  const [from, setFrom] = useState(null);
+  const [to, setTo] = useState(null);
 
   useEffect(() => {
     fetch("/api/panel-summary")
@@ -46,8 +47,8 @@ export default function VentasPage() {
   function loadSales() {
     const params = new URLSearchParams();
     if (paymentMethod) params.set("paymentMethod", paymentMethod);
-    if (from) params.set("from", from);
-    if (to) params.set("to", to);
+    if (from) params.set("from", toDateInputValue(from));
+    if (to) params.set("to", toDateInputValue(to));
     fetch(`/api/sales?${params.toString()}`)
       .then((res) => res.json())
       .then(setSales);
@@ -121,18 +122,12 @@ export default function VentasPage() {
             </option>
           ))}
         </select>
-        <input
-          type="date"
-          value={from}
-          onChange={(e) => setFrom(e.target.value)}
-          className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
-        />
-        <input
-          type="date"
-          value={to}
-          onChange={(e) => setTo(e.target.value)}
-          className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
-        />
+        <div className="w-36">
+          <DatePicker value={from} onChange={setFrom} placeholder="Desde" />
+        </div>
+        <div className="w-36">
+          <DatePicker value={to} onChange={setTo} placeholder="Hasta" />
+        </div>
       </div>
 
       <div className="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-white">

@@ -2,18 +2,19 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Plus, Receipt, Trash2 } from "lucide-react";
+import DatePicker from "@/components/DatePicker";
 import ExpenseModal from "@/components/ExpenseModal";
 import { Skeleton } from "@/components/Skeleton";
 import { EXPENSE_CATEGORIES } from "@/lib/expenses";
-import { formatCurrency } from "@/lib/format";
+import { formatCurrency, toDateInputValue } from "@/lib/format";
 
 export default function GastosPage() {
   const [expenses, setExpenses] = useState(null);
   const [suppliers, setSuppliers] = useState([]);
   const [categoryFilter, setCategoryFilter] = useState("");
   const [supplierFilter, setSupplierFilter] = useState("");
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
+  const [from, setFrom] = useState(null);
+  const [to, setTo] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
 
@@ -21,8 +22,8 @@ export default function GastosPage() {
     const params = new URLSearchParams();
     if (categoryFilter) params.set("category", categoryFilter);
     if (supplierFilter) params.set("supplierId", supplierFilter);
-    if (from) params.set("from", from);
-    if (to) params.set("to", to);
+    if (from) params.set("from", toDateInputValue(from));
+    if (to) params.set("to", toDateInputValue(to));
     fetch(`/api/expenses?${params.toString()}`)
       .then((res) => res.json())
       .then(setExpenses);
@@ -100,18 +101,12 @@ export default function GastosPage() {
             </option>
           ))}
         </select>
-        <input
-          type="date"
-          value={from}
-          onChange={(e) => setFrom(e.target.value)}
-          className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
-        />
-        <input
-          type="date"
-          value={to}
-          onChange={(e) => setTo(e.target.value)}
-          className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
-        />
+        <div className="w-36">
+          <DatePicker value={from} onChange={setFrom} placeholder="Desde" />
+        </div>
+        <div className="w-36">
+          <DatePicker value={to} onChange={setTo} placeholder="Hasta" />
+        </div>
       </div>
 
       <div className="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-white">
