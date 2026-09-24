@@ -23,9 +23,15 @@ enum OrderStatus {
   ABIERTA
   EN_COCINA
   LISTA
+  ENVIANDO
   ENTREGADA
   PAGADA
   CANCELADA
+}
+
+enum DeliveryMode {
+  RETIRA
+  ENVIO
 }
 
 enum PaymentMethod {
@@ -39,6 +45,14 @@ enum CashMovementType {
   INGRESO
   EGRESO
   VENTA
+}
+
+// Fila única de configuración general del local (ej. costo de envío). Se
+// lee/escribe siempre con id "singleton" — ver lib/settings.js.
+model Settings {
+  id          String   @id @default("singleton")
+  deliveryFee Decimal  @default(0) @db.Decimal(10, 2)
+  updatedAt   DateTime @updatedAt
 }
 
 model Category {
@@ -56,6 +70,7 @@ model Product {
   cost        Decimal     @db.Decimal(10, 2)
   stock       Int         @default(0)
   available   Boolean     @default(true)
+  imageUrl    String?
   categoryId  String?
   category    Category?   @relation(fields: [categoryId], references: [id])
   orderItems  OrderItem[]
@@ -75,10 +90,36 @@ model Supplier {
 }
 
 model RestaurantTable {
-  id       String  @id @default(cuid())
-  number   Int     @unique
-  capacity Int     @default(2)
-  orders   Order[]
+  id           String        @id @default(cuid())
+  number       Int           @unique
+  capacity     Int           @default(2)
+  posX         Float         @default(50)
+  posY         Float         @default(50)
+  orders       Order[]
+  reservations Reservation[]
+}
+
+model Reservation {
+  id           String          @id @default(cuid())
+  tableId      String
+  table        RestaurantTable @relation(fields: [tableId], references: [id], onDelete: Cascade)
+  customerName String
+  phone        String?
+  partySize    Int             @default(2)
+  reservedFor  DateTime
+  notes        String?
+  createdAt    DateTime        @default(now())
+}
+
+// El id del rol es el mismo string que ROLES[].id en lib/roles.js (fuente
+// de verdad de roles/permisos) — no hay un enum acá para no duplicarlo.
+model Employee {
+  id        String   @id @default(cuid())
+  name      String
+  email     String?  @unique
+  role      String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
 }
 
 model Order {
@@ -86,10 +127,18 @@ model Order {
   type       OrderType   @default(SALON)
   status     OrderStatus @default(ABIERTA)
   tableId    String?
-  table      RestaurantTable? @relation(fields: [tableId], references: [id])
+  table      RestaurantTable? @relation(fields: [tableId], references: [id], onDelete: SetNull)
   waiterName String?
+  customerName  String?
+  customerPhone String?
+  address       String?
+  deliveryMode  DeliveryMode?
+  deliveredBy   String?
+  paid       Boolean     @default(false)
   items      OrderItem[]
-  sale       Sale?
+  saleId     String?
+  sale       Sale?       @relation(fields: [saleId], references: [id])
+  deliveryFee Decimal    @default(0) @db.Decimal(10, 2)
   total      Decimal     @default(0) @db.Decimal(10, 2)
   createdAt  DateTime    @default(now())
   closedAt   DateTime?
@@ -108,8 +157,7 @@ model OrderItem {
 
 model Sale {
   id            String        @id @default(cuid())
-  orderId       String?       @unique
-  order         Order?        @relation(fields: [orderId], references: [id])
+  orders        Order[]
   total         Decimal       @db.Decimal(10, 2)
   paymentMethod PaymentMethod
   cashierName   String?

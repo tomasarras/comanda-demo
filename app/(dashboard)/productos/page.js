@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { AlertTriangle, Package, Pencil, Plus, Search, Trash2 } from "lucide-react";
+import { AlertTriangle, ExternalLink, ImageOff, Package, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import ProductModal from "@/components/ProductModal";
 import { Skeleton } from "@/components/Skeleton";
 import { formatCurrency } from "@/lib/format";
@@ -67,17 +67,28 @@ export default function ProductosPage() {
           <h1 className="text-xl font-bold text-slate-900">Productos</h1>
           <p className="mt-1 text-sm text-slate-500">Menú del restaurante: precios, costos y stock.</p>
         </div>
-        <button
-          type="button"
-          onClick={() => {
-            setEditing(null);
-            setModalOpen(true);
-          }}
-          className="flex items-center gap-2 rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700"
-        >
-          <Plus size={16} />
-          Nuevo producto
-        </button>
+        <div className="flex items-center gap-2">
+          <a
+            href="/menu"
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50"
+          >
+            <ExternalLink size={16} />
+            Ver menú público
+          </a>
+          <button
+            type="button"
+            onClick={() => {
+              setEditing(null);
+              setModalOpen(true);
+            }}
+            className="flex items-center gap-2 rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700"
+          >
+            <Plus size={16} />
+            Nuevo producto
+          </button>
+        </div>
       </div>
 
       <div className="mt-4 flex flex-col gap-3 sm:flex-row">
@@ -121,6 +132,7 @@ export default function ProductosPage() {
             <table className="w-full min-w-[640px] text-left text-sm">
               <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-400">
                 <tr>
+                  <th className="px-4 py-3 font-medium"></th>
                   <th className="px-4 py-3 font-medium">Producto</th>
                   <th className="px-4 py-3 font-medium">Categoría</th>
                   <th className="px-4 py-3 font-medium">Precio</th>
@@ -133,6 +145,16 @@ export default function ProductosPage() {
               <tbody className="divide-y divide-slate-100">
                 {filtered.map((p) => (
                   <tr key={p.id} className="hover:bg-slate-50">
+                    <td className="px-4 py-3">
+                      <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
+                        {p.imageUrl ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={p.imageUrl} alt="" className="h-full w-full object-cover" />
+                        ) : (
+                          <ImageOff size={14} className="text-slate-300" />
+                        )}
+                      </div>
+                    </td>
                     <td className="px-4 py-3 font-medium text-slate-800">{p.name}</td>
                     <td className="px-4 py-3 text-slate-500">{p.category?.name || "—"}</td>
                     <td className="px-4 py-3 text-slate-700">{formatCurrency(p.price)}</td>

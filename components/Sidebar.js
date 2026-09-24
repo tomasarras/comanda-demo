@@ -4,10 +4,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BadgeDollarSign,
+  Bike,
+  CalendarClock,
   ClipboardList,
   LayoutDashboard,
+  LayoutGrid,
   Package,
   Receipt,
+  Settings,
   ShoppingCart,
   Truck,
   UtensilsCrossed,
@@ -19,13 +23,17 @@ import { useRole } from "@/components/RoleProvider";
 
 const ICONS = {
   panel: LayoutDashboard,
+  mesas: LayoutGrid,
+  reservas: CalendarClock,
   ordenes: ClipboardList,
   mostrador: ShoppingCart,
+  envios: Bike,
   ventas: BadgeDollarSign,
   gastos: Receipt,
   productos: Package,
   caja: Wallet,
   proveedores: Truck,
+  configuracion: Settings,
 };
 
 export default function Sidebar({ open, onClose }) {

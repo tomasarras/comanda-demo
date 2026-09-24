@@ -16,6 +16,8 @@ export default function CheckoutOrderModal({ order, cashierName, onClose, onChec
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
+  const label = order.deliveryMode === "ENVIO" ? "el envío" : "el retiro";
+
   async function handleSubmit(e) {
     e.preventDefault();
     setSaving(true);
@@ -40,13 +42,16 @@ export default function CheckoutOrderModal({ order, cashierName, onClose, onChec
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/50 p-0 sm:items-center sm:p-4">
       <div className="w-full max-w-sm rounded-t-2xl bg-white p-5 shadow-xl sm:rounded-2xl">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-slate-900">Cobrar mesa {order.table?.number}</h2>
+          <h2 className="text-lg font-bold text-slate-900">Cobrar {label}</h2>
           <button type="button" onClick={onClose} className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100">
             <X size={18} />
           </button>
         </div>
         <p className="mt-1 text-xs text-slate-500">
-          Total: <span className="font-semibold text-slate-700">{formatCurrency(order.total)}</span>
+          {order.customerName}
+          {order.customerPhone ? ` · ${order.customerPhone}` : ""}
+          {order.deliveryFee > 0 ? ` · incluye ${formatCurrency(order.deliveryFee)} de envío` : ""} · Total:{" "}
+          <span className="font-semibold text-slate-700">{formatCurrency(order.total)}</span>
         </p>
 
         <form onSubmit={handleSubmit} className="mt-4 space-y-3">

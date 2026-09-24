@@ -5,7 +5,12 @@ function serialize(sale) {
   return {
     ...sale,
     total: Number(sale.total),
-    order: sale.order ? { type: sale.order.type, table: sale.order.table } : null,
+    orders: (sale.orders || []).map((o) => ({
+      type: o.type,
+      table: o.table,
+      customerName: o.customerName,
+      deliveryMode: o.deliveryMode,
+    })),
   };
 }
 
@@ -25,7 +30,7 @@ export async function GET(request) {
 
   const sales = await prisma.sale.findMany({
     where,
-    include: { order: { include: { table: true } } },
+    include: { orders: { include: { table: true } } },
     orderBy: { createdAt: "desc" },
     take: 200,
   });

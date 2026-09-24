@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { serializeOrder } from "@/lib/orders";
+import { createOrder, SaleError } from "@/lib/sales";
 
 export async function GET() {
   const orders = await prisma.order.findMany({
@@ -13,71 +14,26 @@ export async function GET() {
 
 export async function POST(request) {
   const body = await request.json();
-  const tableId = body.tableId;
-  const waiterName = (body.waiterName || "").trim();
-  const items = Array.isArray(body.items) ? body.items : [];
 
-  if (!tableId) {
-    return NextResponse.json({ error: "Falta seleccionar una mesa" }, { status: 400 });
-  }
-  if (items.length === 0) {
-    return NextResponse.json({ error: "La orden no tiene productos" }, { status: 400 });
-  }
-
-  const table = await prisma.restaurantTable.findUnique({
-    where: { id: tableId },
-    include: { orders: { where: { status: { notIn: ["PAGADA", "CANCELADA"] } } } },
-  });
-  if (!table) {
-    return NextResponse.json({ error: "La mesa no existe" }, { status: 400 });
-  }
-  if (table.orders.length > 0) {
-    return NextResponse.json({ error: "La mesa ya tiene una orden abierta" }, { status: 409 });
-  }
-
-  const products = await prisma.product.findMany({ where: { id: { in: items.map((i) => i.productId) } } });
-  const productMap = new Map(products.map((p) => [p.id, p]));
-
-  let total = 0;
-  const itemsData = items.map((item) => {
-    const product = productMap.get(item.productId);
-    if (!product) throw new Error("Uno de los productos ya no existe");
-    const quantity = Number(item.quantity);
-    if (!Number.isFinite(quantity) || quantity <= 0) throw new Error("Cantidad inválida");
-    const unitPrice = Number(product.price);
-    total += unitPrice * quantity;
-    return { product, quantity, unitPrice, notes: item.notes || null };
-  });
-
-  const order = await prisma.$transaction(async (tx) => {
-    const order = await tx.order.create({
-      data: {
-        type: "SALON",
-        status: "ABIERTA",
-        tableId,
-        waiterName: waiterName || null,
-        total,
-        items: {
-          create: itemsData.map(({ product, quantity, unitPrice, notes }) => ({
-            productId: product.id,
-            quantity,
-            unitPrice,
-            notes,
-          })),
-        },
-      },
-      include: { items: { include: { product: true } }, table: true },
+  try {
+    const order = await createOrder({
+      type: body.type === "DELIVERY" ? "DELIVERY" : "SALON",
+      tableId: body.tableId || null,
+      waiterName: (body.waiterName || "").trim(),
+      customerName: body.customerName || "",
+      customerPhone: body.customerPhone || "",
+      address: body.address || "",
+      deliveryMode: body.deliveryMode,
+      paid: Boolean(body.paid),
+      paymentMethod: body.paymentMethod,
+      cashierName: (body.cashierName || body.waiterName || "").trim() || "Equipo",
+      items: Array.isArray(body.items) ? body.items : [],
     });
-
-    for (const { product, quantity } of itemsData) {
-      await tx.product.update({
-        where: { id: product.id },
-        data: { stock: Math.max(product.stock - quantity, 0) },
-      });
+    return NextResponse.json(serializeOrder(order), { status: 201 });
+  } catch (err) {
+    if (err instanceof SaleError) {
+      return NextResponse.json({ error: err.message }, { status: err.status });
     }
-
-    return order;
-  });
-
-  return NextResponse.json(serializeOrder(order), { status: 201 });
+    throw err;
+  }
 }

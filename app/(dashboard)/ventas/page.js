@@ -15,9 +15,19 @@ const PAYMENT_METHODS = [
 const PAYMENT_METHOD_LABELS = Object.fromEntries(PAYMENT_METHODS.map((m) => [m.id, m.label]));
 
 function origin(sale) {
-  if (!sale.order) return "—";
-  if (sale.order.type === "MOSTRADOR") return "Mostrador";
-  return sale.order.table ? `Mesa ${sale.order.table.number}` : "Salón";
+  const orders = sale.orders || [];
+  if (orders.length === 0) return "—";
+  if (orders.length > 1) {
+    const table = orders[0].table;
+    return table ? `Mesa ${table.number} (${orders.length})` : "Salón";
+  }
+  const order = orders[0];
+  if (order.type === "MOSTRADOR") return "Mostrador";
+  if (order.type === "DELIVERY") {
+    const label = order.deliveryMode === "ENVIO" ? "Envío" : "Retira";
+    return order.customerName ? `${label} — ${order.customerName}` : label;
+  }
+  return order.table ? `Mesa ${order.table.number}` : "Salón";
 }
 
 export default function VentasPage() {

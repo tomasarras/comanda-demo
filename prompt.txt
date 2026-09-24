@@ -1,0 +1,75 @@
+Cada bloque de abajo es una imagen a generar para el menú de un restaurante
+(demo ficticia). Estilo consistente para las 17: fotografía profesional de
+comida, luz natural suave, alta definición, apetitosa, sin texto ni
+marcas de agua ni logos, sin manos ni cubiertos en la mano, encuadre
+cuadrado (1:1), fondo simple (mesa de madera rústica o mantel/plato
+neutro), profundidad de campo baja con el plato enfocado. Guardá cada
+imagen con el nombre indicado en "file" dentro de public/menu-images/.
+
+title=Empanadas de carne (x3)
+file=empanadas-de-carne.png
+prompt=Fotografía de comida profesional de tres empanadas argentinas horneadas de carne, repulgo tradicional a mano, doradas y brillantes, servidas en un plato de cerámica oscura sobre una mesa de madera rústica, luz natural suave desde un costado, ángulo de 45 grados, fondo desenfocado, sin texto, sin logos, encuadre cuadrado 1:1, muy apetitosa y detallada.
+
+title=Provoleta
+file=provoleta.png
+prompt=Fotografía de comida profesional de una provoleta a la parrilla, queso provolone derretido y dorado con bordes crocantes, espolvoreada con orégano y un hilo de aceite de oliva, servida en una cazuela de hierro o plato de barro sobre mesa de madera rústica, luz cálida, vista desde arriba en ángulo de 45 grados, sin texto, sin logos, encuadre cuadrado 1:1, muy apetitosa.
+
+title=Tabla de fiambres
+file=tabla-de-fiambres.png
+prompt=Fotografía de comida profesional de una tabla de madera con fiambres y quesos para compartir: jamón crudo en láminas finas, rodajas de salame, cubos de queso, aceitunas verdes y negras, prolijamente distribuidos, sobre una mesa de madera rústica, luz natural suave, vista desde arriba, sin texto, sin logos, encuadre cuadrado 1:1, muy apetitosa.
+
+title=Milanesa napolitana
+file=milanesa-napolitana.png
+prompt=Fotografía de comida profesional de una milanesa de ternera napolitana, cubierta con salsa de tomate, jamón y muzzarella gratinada y dorada, acompañada de papas fritas doradas, servida en un plato blanco sobre mesa de madera rústica, luz natural cálida, ángulo de 45 grados, sin texto, sin logos, encuadre cuadrado 1:1, muy apetitosa.
+
+title=Bife de chorizo
+file=bife-de-chorizo.png
+prompt=Fotografía de comida profesional de un bife de chorizo grillado a la parrilla, con marcas de grilla bien doradas, jugoso, cortado ligeramente para mostrar el punto de cocción, acompañado de puré de papas o ensalada fresca, plato blanco, mesa de madera rústica, luz natural cálida, ángulo de 45 grados, sin texto, sin logos, encuadre cuadrado 1:1, muy apetitosa.
+
+title=Pollo al verdeo
+file=pollo-al-verdeo.png
+prompt=Fotografía de comida profesional de una suprema de pollo grillada bañada en salsa cremosa de cebolla de verdeo, con trocitos verdes visibles en la salsa, servida en plato blanco con una guarnición simple de vegetales, mesa de madera rústica, luz natural suave, ángulo de 45 grados, sin texto, sin logos, encuadre cuadrado 1:1, muy apetitosa.
+
+title=Salmón grillado
+file=salmon-grillado.png
+prompt=Fotografía de comida profesional de un filet de salmón grillado con la piel dorada y crocante, acompañado de vegetales salteados coloridos (zanahoria, zucchini, brócoli) y un toque de salsa de limón, plato blanco, mesa de madera clara, luz natural brillante, ángulo de 45 grados, sin texto, sin logos, encuadre cuadrado 1:1, muy apetitosa.
+
+title=Ñoquis con salsa fileto
+file=noquis-con-salsa-fileto.png
+prompt=Fotografía de comida profesional de un plato de ñoquis de papa caseros bañados en salsa fileto (tomate) con hojas frescas de albahaca por encima, en un plato hondo blanco, mesa de madera rústica, luz natural suave, vista desde arriba en ángulo de 45 grados, sin texto, sin logos, encuadre cuadrado 1:1, muy apetitosa.
+
+title=Ravioles de ricota y nuez
+file=ravioles-de-ricota-y-nuez.png
+prompt=Fotografía de comida profesional de ravioles caseros rellenos de ricota y nuez, bañados en manteca dorada con hojas de salvia, en un plato blanco, mesa de madera rústica, luz natural suave, vista desde arriba en ángulo de 45 grados, sin texto, sin logos, encuadre cuadrado 1:1, muy apetitosa.
+
+title=Sorrentinos de jamón y queso
+file=sorrentinos-de-jamon-y-queso.png
+prompt=Fotografía de comida profesional de sorrentinos caseros rellenos de jamón y queso, bañados en salsa fileto o crema, servidos en un plato blanco hondo, mesa de madera rústica, luz natural suave, vista desde arriba en ángulo de 45 grados, sin texto, sin logos, encuadre cuadrado 1:1, muy apetitosa.
+
+title=Flan casero
+file=flan-casero.png
+prompt=Fotografía de comida profesional de un flan casero individual desmoldado en un plato blanco, bañado en abundante dulce de leche y con un copo de crema chantilly al lado, mesa de madera clara, luz natural suave, ángulo de 45 grados, sin texto, sin logos, encuadre cuadrado 1:1, muy apetitosa.
+
+title=Tiramisú
+file=tiramisu.png
+prompt=Fotografía de comida profesional de una porción de tiramisú clásico en copa o plato individual, capas visibles de mascarpone y bizcocho con café, espolvoreado con cacao amargo por encima, mesa de madera oscura, luz natural suave, ángulo de 45 grados, sin texto, sin logos, encuadre cuadrado 1:1, muy apetitosa.
+
+title=Panqueques con dulce de leche
+file=panqueques-con-dulce-de-leche.png
+prompt=Fotografía de comida profesional de panqueques caseros doblados o enrollados, rellenos y bañados con abundante dulce de leche, apilados en un plato blanco, mesa de madera clara, luz natural cálida, ángulo de 45 grados, sin texto, sin logos, encuadre cuadrado 1:1, muy apetitosa.
+
+title=Agua mineral 500ml
+file=agua-mineral-500ml.png
+prompt=Fotografía de producto profesional de una botella de agua mineral transparente de 500ml sin gas, con etiqueta genérica sin marca ni texto legible, gotas de condensación en el vidrio, sobre una mesa de madera clara o mantel neutro, luz natural brillante, fondo simple desenfocado, sin logos reales, encuadre cuadrado 1:1.
+
+title=Gaseosa línea Coca-Cola
+file=gaseosa-linea-coca-cola.png
+prompt=Fotografía de producto profesional de una botella de vidrio de gaseosa cola genérica con etiqueta lisa sin marca ni texto ni logo, con gotas de condensación, sobre mesa de madera clara o mantel neutro, luz natural brillante, fondo simple desenfocado, encuadre cuadrado 1:1, sin marcas ni logos reales de ninguna empresa.
+
+title=Copa de vino de la casa
+file=copa-de-vino-de-la-casa.png
+prompt=Fotografía de producto profesional de una copa de vino tinto servida hasta la mitad, cristal transparente, sobre una mesa de madera oscura rústica, luz cálida lateral que resalta el color del vino, fondo desenfocado con una botella difusa detrás, sin texto, sin logos, encuadre cuadrado 1:1.
+
+title=Cerveza artesanal IPA
+file=cerveza-artesanal-ipa.png
+prompt=Fotografía de producto profesional de una botella de cerveza artesanal ámbar con etiqueta lisa sin texto ni marca, junto a un vaso o copa con cerveza IPA servida y espuma abundante, gotas de condensación, mesa de madera rústica, luz natural cálida, fondo desenfocado, sin logos reales, encuadre cuadrado 1:1.

@@ -20,6 +20,7 @@ export async function PATCH(request, { params }) {
   if (body.cost !== undefined) data.cost = Number(body.cost);
   if (body.stock !== undefined) data.stock = Number(body.stock);
   if (body.available !== undefined) data.available = Boolean(body.available);
+  if (body.imageUrl !== undefined) data.imageUrl = body.imageUrl || null;
   if (body.categoryId !== undefined) data.categoryId = body.categoryId || null;
 
   try {

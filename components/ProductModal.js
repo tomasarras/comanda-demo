@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, X } from "lucide-react";
+import { ImageOff, Loader2, Upload, X } from "lucide-react";
 
 const inputClass =
   "w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500";
@@ -14,6 +14,7 @@ const emptyForm = {
   cost: "",
   stock: "0",
   available: true,
+  imageUrl: "",
 };
 
 function initialFormFor(product) {
@@ -26,6 +27,7 @@ function initialFormFor(product) {
     cost: String(product.cost),
     stock: String(product.stock),
     available: product.available,
+    imageUrl: product.imageUrl || "",
   };
 }
 
@@ -34,10 +36,31 @@ function initialFormFor(product) {
 export default function ProductModal({ onClose, onSaved, categories, product }) {
   const [form, setForm] = useState(() => initialFormFor(product));
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
 
   function set(key, value) {
     setForm((prev) => ({ ...prev, [key]: value }));
+  }
+
+  async function handleImageChange(e) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setUploading(true);
+    setError("");
+    try {
+      const body = new FormData();
+      body.append("file", file);
+      const res = await fetch("/api/upload", { method: "POST", body });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "No se pudo subir la imagen");
+      set("imageUrl", data.url);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setUploading(false);
+    }
   }
 
   async function handleSubmit(e) {
@@ -57,6 +80,7 @@ export default function ProductModal({ onClose, onSaved, categories, product }) 
       cost: Number(form.cost) || 0,
       stock: Number(form.stock) || 0,
       available: form.available,
+      imageUrl: form.imageUrl || null,
     };
 
     const url = product ? `/api/products/${product.id}` : "/api/products";
@@ -91,6 +115,35 @@ export default function ProductModal({ onClose, onSaved, categories, product }) 
         </div>
 
         <form onSubmit={handleSubmit} className="mt-4 space-y-3">
+          <Field label="Foto (opcional)">
+            <div className="flex items-center gap-3">
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
+                {form.imageUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={form.imageUrl} alt="" className="h-full w-full object-cover" />
+                ) : (
+                  <ImageOff size={20} className="text-slate-300" />
+                )}
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="flex w-fit cursor-pointer items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50">
+                  {uploading ? <Loader2 size={13} className="animate-spin" /> : <Upload size={13} />}
+                  {form.imageUrl ? "Cambiar foto" : "Subir foto"}
+                  <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} disabled={uploading} />
+                </label>
+                {form.imageUrl && (
+                  <button
+                    type="button"
+                    onClick={() => set("imageUrl", "")}
+                    className="w-fit text-xs font-medium text-slate-400 hover:text-rose-600"
+                  >
+                    Quitar foto
+                  </button>
+                )}
+              </div>
+            </div>
+          </Field>
+
           <Field label="Nombre">
             <input
               required
@@ -175,7 +228,7 @@ export default function ProductModal({ onClose, onSaved, categories, product }) 
             </button>
             <button
               type="submit"
-              disabled={saving}
+              disabled={saving || uploading}
               className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-orange-600 py-2.5 text-sm font-semibold text-white hover:bg-orange-700 disabled:opacity-60"
             >
               {saving && <Loader2 size={15} className="animate-spin" />}

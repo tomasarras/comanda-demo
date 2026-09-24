@@ -37,6 +37,7 @@ export async function POST(request) {
       cost: Number.isFinite(cost) ? cost : 0,
       stock: Number.isFinite(Number(body.stock)) ? Number(body.stock) : 0,
       available: body.available !== false,
+      imageUrl: body.imageUrl || null,
       categoryId: body.categoryId || null,
     },
     include: { category: true },

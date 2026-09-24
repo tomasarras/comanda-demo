@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { defaultPositionFor, nextTableNumber, serializeTable } from "@/lib/tables";
 
 export async function GET() {
   const tables = await prisma.restaurantTable.findMany({
@@ -12,12 +13,17 @@ export async function GET() {
     },
   });
 
-  const serialized = tables.map((t) => ({
-    id: t.id,
-    number: t.number,
-    capacity: t.capacity,
-    activeOrder: t.orders[0] || null,
-  }));
+  return NextResponse.json(tables.map(serializeTable));
+}
 
-  return NextResponse.json(serialized);
+export async function POST() {
+  const tables = await prisma.restaurantTable.findMany({ select: { number: true } });
+  const number = nextTableNumber(tables);
+  const { posX, posY } = defaultPositionFor(tables.length);
+
+  const table = await prisma.restaurantTable.create({
+    data: { number, capacity: 2, posX, posY },
+  });
+
+  return NextResponse.json(serializeTable(table), { status: 201 });
 }
