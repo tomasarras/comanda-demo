@@ -132,8 +132,8 @@ export default function MenuPage() {
 function ProductDetail({ product, onClose }) {
   const outOfStock = !product.available || product.stock <= 0;
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/50 p-0 sm:items-center sm:p-4">
-      <div className="max-h-[90vh] w-full max-w-sm overflow-y-auto rounded-t-2xl bg-white shadow-xl sm:rounded-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4">
+      <div className="max-h-[90vh] w-full max-w-sm overflow-y-auto rounded-2xl bg-white shadow-xl">
         <div className="relative flex aspect-square items-center justify-center bg-slate-100">
           {product.imageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
